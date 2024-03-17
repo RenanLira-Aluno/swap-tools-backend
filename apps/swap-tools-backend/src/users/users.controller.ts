@@ -11,13 +11,7 @@ export class UsersController {
         private usersService: UsersService
     ) { }
 
-    @Post()
-    @ApiCreatedResponse({ description: 'The record has been successfully created.' })
-    @ApiBadRequestResponse({ description: 'Bad Request' })
-    async create(@Body() createUserDto: CreateUserDto) {
-        console.log(createUserDto);
-        return this.usersService.create(createUserDto);
-    }
+    
 
     @Get()
     async getAll() {

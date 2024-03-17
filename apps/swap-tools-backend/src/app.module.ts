@@ -4,11 +4,17 @@ import { AppService } from './app.service';
 import { DatabaseModule } from '@app/database';
 import { UsersModule } from './users/users.module';
 import { IsEmailAlreadyInUseContraint } from './validations/IsEmailAlreadyInUse.validator';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/guards/auth.guard';
 
 
 @Module({
-  imports: [DatabaseModule, UsersModule,],
+  imports: [DatabaseModule, UsersModule, AuthModule,],
   controllers: [AppController],
-  providers: [AppService, IsEmailAlreadyInUseContraint],
+  providers: [AppService, IsEmailAlreadyInUseContraint, {
+    provide: APP_GUARD,
+    useClass: AuthGuard
+  }],
 })
 export class AppModule { }

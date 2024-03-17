@@ -20,11 +20,24 @@ export class UsersService {
 
         const user = this.usersRepository.create({ ...createUserDto, password: password_hash });
         await this.usersRepository.save(user);
+
+        return user;
+
     }
 
     async getAll() {
 
         return this.usersRepository.find({ select: ['id', 'name', 'email'] });
+    }
+
+    async getOne(id: string) {
+
+        return this.usersRepository.findOne({ where: { id: id }, select: ['id', 'email', 'password'] });
+    }
+
+    async getOneByEmail(email: string) {
+
+        return this.usersRepository.findOne({ where: { email } });
     }
 
     async emailExists(email: string) {
