@@ -38,9 +38,11 @@ export class AuthService {
         return {
             access_token: token
         }
-
-
     }
+
+    // async refreshToken(user: User) {
+    //     return this.jwtService.sign({ sub: user.id, user: { ...user, password: undefined } })
+    // }
 
 
 }

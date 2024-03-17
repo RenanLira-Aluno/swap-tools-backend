@@ -1,3 +1,4 @@
 export const jwtConstants = {
-    secret: 'uiuiFlamengo',
+    jwt_access_secret: 'uiuiFlamengo',
+    jwt_refresh_secret: 'uiui'
 };
