@@ -1,7 +1,7 @@
 import { User } from "./user.entity"
-import { Anuncio } from "./anuncio.entity"
+import { RefreshToken } from "./refreshToken.entity"
 
 export {
     User,
-    Anuncio
+    RefreshToken
 }

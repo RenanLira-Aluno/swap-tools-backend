@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { DatabaseService } from './database.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Anuncio } from './entities/anuncio.entity';
+import { RefreshToken } from './entities/refreshToken.entity';
+
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { Anuncio } from './entities/anuncio.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'test',
-      entities: [User, Anuncio],
+      entities: [RefreshToken, User],
       synchronize: true,
     })
   ],

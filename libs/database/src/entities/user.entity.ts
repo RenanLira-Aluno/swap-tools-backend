@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserModel } from "../models/";
-import { Anuncio } from "./anuncio.entity";
+import { RefreshToken } from "./refreshToken.entity";
+
 
 @Entity()
 export class User implements UserModel {
@@ -22,9 +23,7 @@ export class User implements UserModel {
     @UpdateDateColumn()
     updated_at: Date;
 
-    @OneToMany(() => Anuncio, anuncio => anuncio.user_id)
-    anuncios: Anuncio[];
-
-
+    @OneToMany(() => RefreshToken, refreshToken => refreshToken.user)
+    refresh_tokens: RefreshToken[]
 
 }

@@ -32,7 +32,7 @@ export class UsersService {
 
     async getOne(id: string) {
 
-        return this.usersRepository.findOne({ where: { id: id }, select: ['id', 'email', 'password'] });
+        return this.usersRepository.findOne({ where: { id: id } });
     }
 
     async getOneByEmail(email: string) {

@@ -6,7 +6,7 @@ import { UsersModule } from './users/users.module';
 import { IsEmailAlreadyInUseContraint } from './validations/IsEmailAlreadyInUse.validator';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AccessTokenGuard } from './auth/guards/accessToken.guard';
+import { AccessTokenGuard } from './auth/guards/access-token.guard';
 
 
 @Module({
