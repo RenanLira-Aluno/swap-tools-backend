@@ -6,10 +6,9 @@ import { ApiOkResponse, ApiProperty, ApiTags, ApiUnauthorizedResponse } from '@n
 import { IsPublic } from './decorators/isPublic.decorator';
 import { AuthRequest, RefreshRequest } from './interfaces/request.interface';
 import { SignInResponse } from './interfaces/responses/signIn.response';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { CreateAddressDto } from './dto/create-address.dto';
 
 

@@ -10,6 +10,9 @@ export class User implements UserModel {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
+  @Column()
+  phone: string;
+
   @Column({ unique: true })
   email: string;
 
