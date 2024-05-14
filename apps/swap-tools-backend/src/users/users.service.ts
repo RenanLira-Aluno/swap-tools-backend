@@ -1,49 +1,81 @@
-import { User } from '@app/database';
+import { Address, Photo, User } from '@app/database';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 
 import * as bcrypt from 'bcrypt';
+import { CreateAddressDto } from '../auth/dto/create-address.dto';
 
 @Injectable()
 export class UsersService {
-    constructor(
-        @InjectRepository(User)
-        private usersRepository: Repository<User>
-    ) { }
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>
+  ) { }
 
-    async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
 
-        const salt = await bcrypt.genSalt();
-        const password_hash = await bcrypt.hash(createUserDto.password, salt);
+    const salt = await bcrypt.genSalt();
+    const password_hash = await bcrypt.hash(createUserDto.password, salt);
 
-        const user = this.usersRepository.create({ ...createUserDto, password: password_hash });
-        await this.usersRepository.save(user);
+    const user = this.usersRepository.create({ ...createUserDto, password: password_hash });
+    await this.usersRepository.save(user);
 
-        return user;
+    return user;
 
+  }
+
+  async getAll() {
+
+    return this.usersRepository.find({ select: ['id', 'name', 'email'] });
+  }
+
+  async getOne(id: string) {
+
+    return this.usersRepository.findOne({ where: { id: id }, relations: ['photo'] });
+  }
+
+  async getOneByEmail(email: string) {
+
+    return this.usersRepository.findOne({ where: { email } });
+  }
+
+  async emailExists(email: string) {
+
+    return this.usersRepository.existsBy({ email })
+  }
+
+  async setProfilePhoto(id: string, path: string) {
+
+    const user = await this.usersRepository.findOne({ where: { id }, relations: ['photo'] });
+
+    if (!user.photo) {
+      user.photo = new Photo();
+      user.photo.user = user;
     }
 
-    async getAll() {
+    user.photo.url = path;
 
-        return this.usersRepository.find({ select: ['id', 'name', 'email'] });
-    }
+    await this.usersRepository.save(user);
 
-    async getOne(id: string) {
+    return user;
+  }
 
-        return this.usersRepository.findOne({ where: { id: id } });
-    }
+  async setAddress(id: string, address: CreateAddressDto) {
 
-    async getOneByEmail(email: string) {
+      const user = await this.usersRepository.findOne({ where: { id }, relations: ['address'] });
 
-        return this.usersRepository.findOne({ where: { email } });
-    }
+      if (!user.address) {
+        user.address = new Address();
+        user.address.user = user;
+      }
 
-    async emailExists(email: string) {
+      user.address = { ...user.address, ...address };
 
-        return this.usersRepository.existsBy({ email })
-    }
 
+      return this.usersRepository.save(user);
+
+  }
 
 }

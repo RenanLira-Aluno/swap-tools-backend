@@ -4,7 +4,7 @@ import { SignUpDto } from './dto/signUp.dto';
 import { UsersService } from '../users/users.service';
 import { SignInDto } from './dto/signIn.dto';
 import * as bcrypt from 'bcrypt';
-import { ApiBody } from '@nestjs/swagger';
+
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { JwtAuthUser } from './interfaces/jwt-auth-user.interface';
@@ -12,96 +12,108 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RefreshToken } from '@app/database/entities';
 import { Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
+import { CreateAddressDto } from './dto/create-address.dto';
 
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private usersService: UsersService,
-        private jwtService: JwtService,
-        @InjectRepository(RefreshToken)
-        private refreshTokenRepository: Repository<RefreshToken>
-    ) { }
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    @InjectRepository(RefreshToken)
+    private refreshTokenRepository: Repository<RefreshToken>
+  ) { }
 
 
 
-    async signUp(signUpDto: SignUpDto): Promise<User> {
-        const user = await this.usersService.create(signUpDto);
+  async signUp(signUpDto: SignUpDto): Promise<User> {
+    const user = await this.usersService.create(signUpDto);
 
-        return user;
+    return user;
+  }
+
+  async me(user: JwtAuthUser) {
+
+    const me = await this.usersService.getOne(user.id)
+
+    return {
+      ...me,
+      photo_id: undefined,
+      password: undefined
+    }
+  }
+
+
+  async signIn(signInDto: SignInDto) {
+
+    const user = await this.usersService.getOneByEmail(signInDto.email);
+
+    if (!user || !await bcrypt.compare(signInDto.password, user.password)) {
+
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    async me(user: JwtAuthUser) {
+    const [token, refreshToken] = await this.generateToken(user)
 
-        const me = await this.usersService.getOne(user.id)
+    return {
+      access_token: token,
+      refresh_token: refreshToken
+    }
+  }
 
-        return {
-            ...me,
-            password: undefined
-        }
+
+  private async generateToken(user: JwtAuthUser) {
+
+    const uuid = randomUUID()
+    const refreshToken = await this.jwtService.signAsync({ sub: user.id, user: { ...user, password: undefined }, token_id: uuid }, { secret: jwtConstants.jwt_refresh_secret, expiresIn: '7d' })
+
+    await this.refreshTokenRepository.save({ jwt: refreshToken, user_id: user.id, id: uuid })
+
+
+    return Promise.all([
+      this.jwtService.signAsync({ sub: user.id, user: { ...user, password: undefined } }, { secret: jwtConstants.jwt_access_secret, expiresIn: '15m' }),
+      refreshToken
+    ])
+
+  }
+
+  async refreshToken(tokenId: string, user: JwtAuthUser) {
+    const token = await this.refreshTokenRepository.findOne({ where: { id: tokenId } })
+
+    if (!token) {
+      throw new UnauthorizedException('Invalid token')
     }
 
+    await this.refreshTokenRepository.update({ id: tokenId }, { revoked_at: new Date() })
 
-    async signIn(signInDto: SignInDto) {
+    const [access_token, refresh_token] = await this.generateToken(user)
 
-        const user = await this.usersService.getOneByEmail(signInDto.email);
+    return {
+      access_token,
+      refresh_token
+    }
+  }
 
-        if (!user || !await bcrypt.compare(signInDto.password, user.password)) {
+  async checkRefreshToken(token_id: string) {
+    const refreshToken = await this.refreshTokenRepository.findOne({ where: { id: token_id } })
 
-            throw new UnauthorizedException('Invalid credentials');
-        }
-
-        const [token, refreshToken] = await this.generateToken(user)
-
-        return {
-            access_token: token,
-            refresh_token: refreshToken
-        }
+    if (!refreshToken || refreshToken.revoked_at) {
+      throw new UnauthorizedException('Invalid token')
     }
 
+    return refreshToken
 
-    private async generateToken(user: JwtAuthUser) {
+  }
 
-        const uuid = randomUUID()
-        const refreshToken = await this.jwtService.signAsync({ sub: user.id, user: { ...user, password: undefined }, token_id: uuid }, { secret: jwtConstants.jwt_refresh_secret, expiresIn: '7d' })
+  async uploadPhoto(user: JwtAuthUser, photo: Express.Multer.File) {
 
-        await this.refreshTokenRepository.save({ jwt: refreshToken, user_id: user.id, id: uuid })
+    return await this.usersService.setProfilePhoto(user.id, photo.path)
+  }
 
+  async setAddress(user: JwtAuthUser, body: CreateAddressDto) {
 
-        return Promise.all([
-            this.jwtService.signAsync({ sub: user.id, user: { ...user, password: undefined } }, { secret: jwtConstants.jwt_access_secret, expiresIn: '15m' }),
-            refreshToken
-        ])
-
-    }
-
-    async refreshToken(tokenId: string, user: JwtAuthUser) {
-        const token = await this.refreshTokenRepository.findOne({ where: { id: tokenId } })
-
-        if (!token) {
-            throw new UnauthorizedException('Invalid token')
-        }
-
-        await this.refreshTokenRepository.update({ id: tokenId }, { revoked_at: new Date() })
-
-        const [access_token, refresh_token] = await this.generateToken(user)
-
-        return {
-            access_token,
-            refresh_token
-        }
-    }
-
-    async checkRefreshToken(token_id: string) {
-        const refreshToken = await this.refreshTokenRepository.findOne({ where: { id: token_id } })
-
-        if (!refreshToken || refreshToken.revoked_at) {
-            throw new UnauthorizedException('Invalid token')
-        }
-
-        return refreshToken
-
-    }
+    return await this.usersService.setAddress(user.id, body)
+  }
 
 
 }

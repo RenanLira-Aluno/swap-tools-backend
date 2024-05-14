@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { DatabaseService } from './database.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { RefreshToken } from './entities/refreshToken.entity';
+
+import { User, Photo, RefreshToken,Address } from './entities';
 
 
 @Module({
@@ -10,11 +10,11 @@ import { RefreshToken } from './entities/refreshToken.entity';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: 5433,
       username: 'postgres',
       password: 'postgres',
       database: 'test',
-      entities: [RefreshToken, User],
+      entities: [RefreshToken, User, Photo, Address],
       synchronize: true,
     })
   ],
