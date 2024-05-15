@@ -55,6 +55,8 @@ export class AuthController {
 
 
   @IsPublic()
+  @HttpCode(200)
+  @ApiOkResponse({ description: 'access and refresh token', type: SignInResponse })
   @Post('login-firebase/:token')
   async testeFire(@Param('token') token: string) {
 

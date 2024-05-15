@@ -18,16 +18,18 @@ async function bootstrap() {
     .setDescription('The Swap Tools API description')
     .setVersion('1.0')
     .addTag('users')
+    .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
   app.setGlobalPrefix('api')
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Accept',
   })
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+
   await app.listen(3000);
 }
 bootstrap();

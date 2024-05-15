@@ -26,9 +26,11 @@ export class CreateUserDto implements Omit<UserModel, 'id' | 'created_at' | "upd
   password: string;
 
   @IsOptional()
+  @ApiProperty({ nullable: true, properties: CreateAddressDto as any })
   address?: CreateAddressDto;
 
   @IsEmpty()
+  @ApiProperty({ readOnly: true })
   isAuthProvided?: boolean;
 
 
