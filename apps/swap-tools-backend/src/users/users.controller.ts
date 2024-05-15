@@ -1,10 +1,13 @@
-import { Body, Controller, Get, ParseFilePipeBuilder, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, ParseFilePipeBuilder, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ApiBadRequestResponse, ApiCreatedResponse, ApiHeader, ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthRequest } from '../auth/interfaces/request.interface';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { PoliciesGuard } from '../authorization-casl/guards/policies.guard';
+import { CheckPolicies } from '../authorization-casl/decorators/check-policy.decorator';
+import { ReadAllUsersPolicyHandler } from '../authorization-casl/handlers/read-all-users-policy.handler';
 
 @ApiTags('User')
 
@@ -17,6 +20,8 @@ export class UsersController {
 
 
   @Get()
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies(new ReadAllUsersPolicyHandler())
   async getAll() {
     return this.usersService.getAll();
   }

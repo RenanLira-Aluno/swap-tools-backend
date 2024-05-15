@@ -7,10 +7,11 @@ import { IsEmailAlreadyInUseContraint } from './validations/IsEmailAlreadyInUse.
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
+import { AuthorizationCaslModule } from './authorization-casl/authorization-casl.module';
 
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule,],
+  imports: [DatabaseModule, UsersModule, AuthModule, AuthorizationCaslModule],
   controllers: [AppController],
   providers: [AppService, IsEmailAlreadyInUseContraint, {
     provide: APP_GUARD,

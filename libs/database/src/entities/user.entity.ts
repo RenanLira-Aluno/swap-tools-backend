@@ -10,6 +10,9 @@ export class User implements UserModel {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
+  @Column({ default: false })
+  isAdmin: boolean
+
   @Column({ nullable: true })
   phone: string;
 

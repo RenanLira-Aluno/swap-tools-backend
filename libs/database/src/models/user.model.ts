@@ -9,4 +9,5 @@ export interface UserModel extends BaseModel {
   photo_id: string;
   address_id: string;
   isAuthProvided?: boolean;
+  isAdmin: boolean;
 }

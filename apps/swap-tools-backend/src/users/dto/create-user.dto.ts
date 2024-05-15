@@ -5,7 +5,7 @@ import { IsEmailAlreadyInUse } from "../../validations/IsEmailAlreadyInUse.valid
 import { CreateAddressDto } from "./create-address.dto";
 
 
-export class CreateUserDto implements Omit<UserModel, 'id' | 'created_at' | "updated_at" | "photo_id" | "address_id"> {
+export class CreateUserDto implements Omit<UserModel, 'id' | 'created_at' | "updated_at" | "photo_id" | "address_id" | "isAdmin"> {
 
   @ApiProperty()
   @IsPhoneNumber('BR')
