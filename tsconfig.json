@@ -2,6 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
+    "resolveJsonModule": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -23,6 +24,12 @@
       ],
       "@app/database/*": [
         "libs/database/src/*"
+      ],
+      "@app/firebase": [
+        "libs/firebase/src"
+      ],
+      "@app/firebase/*": [
+        "libs/firebase/src/*"
       ]
     }
   }

@@ -13,9 +13,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { AuthRequest } from './interfaces/request.interface';
+import { FirebaseModule } from '@app/firebase';
 
 @Module({
-  imports: [UsersModule, PassportModule, JwtModule.register({}), TypeOrmModule.forFeature([RefreshToken]), MulterModule.register({
+  imports: [UsersModule, FirebaseModule, PassportModule, JwtModule.register({}), TypeOrmModule.forFeature([RefreshToken]), MulterModule.register({
     dest: './upload',
     storage: diskStorage({
       destination: './upload',

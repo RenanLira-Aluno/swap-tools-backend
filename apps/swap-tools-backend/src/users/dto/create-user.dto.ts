@@ -1,15 +1,15 @@
 import { UserModel } from "@app/database";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsNotEmpty, IsPhoneNumber } from "class-validator";
+import { IsEmail, IsEmpty, IsNotEmpty, IsOptional, IsPhoneNumber } from "class-validator";
 import { IsEmailAlreadyInUse } from "../../validations/IsEmailAlreadyInUse.validator";
+import { CreateAddressDto } from "./create-address.dto";
 
 
 export class CreateUserDto implements Omit<UserModel, 'id' | 'created_at' | "updated_at" | "photo_id" | "address_id"> {
 
   @ApiProperty()
-  @IsNotEmpty()
   @IsPhoneNumber('BR')
-  phone: string;
+  phone?: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -24,6 +24,12 @@ export class CreateUserDto implements Omit<UserModel, 'id' | 'created_at' | "upd
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
+  @IsOptional()
+  address?: CreateAddressDto;
+
+  @IsEmpty()
+  isAuthProvided?: boolean;
 
 
 }

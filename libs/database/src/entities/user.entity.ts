@@ -10,7 +10,7 @@ export class User implements UserModel {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column()
+  @Column({ nullable: true })
   phone: string;
 
   @Column({ unique: true })
@@ -44,5 +44,8 @@ export class User implements UserModel {
   @OneToOne(() => Address, address => address.user, { cascade: true })
   @JoinColumn({ name: "address_id" })
   address: Address
+
+  @Column({ nullable: true })
+  isAuthProvided?: boolean
 
 }

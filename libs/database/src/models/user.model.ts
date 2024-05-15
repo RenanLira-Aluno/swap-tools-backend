@@ -5,7 +5,8 @@ export interface UserModel extends BaseModel {
   name: string;
   email: string;
   password: string;
-  phone: string;
+  phone?: string;
   photo_id: string;
   address_id: string;
+  isAuthProvided?: boolean;
 }

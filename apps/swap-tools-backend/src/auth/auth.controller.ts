@@ -1,4 +1,4 @@
-import { Body, Controller, FileTypeValidator, Get, HttpCode, ParseFilePipe, ParseFilePipeBuilder, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, FileTypeValidator, Get, HttpCode, Param, ParseFilePipe, ParseFilePipeBuilder, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { SignUpDto } from './dto/signUp.dto';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signIn.dto';
@@ -9,7 +9,7 @@ import { SignInResponse } from './interfaces/responses/signIn.response';
 
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateAddressDto } from './dto/create-address.dto';
+import { CreateAddressDto } from '../users/dto/create-address.dto';
 
 
 @ApiTags('auth')
@@ -52,21 +52,17 @@ export class AuthController {
     return await this.authService.refreshToken(req.user.token_id, req.user.user)
   }
 
-  @Post('profile-photo')
-  @UseInterceptors(FileInterceptor('photo'))
-  async uploadPhoto(@Req() req: AuthRequest, @UploadedFile(new ParseFilePipeBuilder().addFileTypeValidator({ fileType: 'image/png' }).build()) photo: Express.Multer.File) {
 
-    const user = await this.authService.uploadPhoto(req.user, photo)
 
-    return { user }
+  @IsPublic()
+  @Post('login-firebase/:token')
+  async testeFire(@Param('token') token: string) {
 
+    const res = await this.authService.firebaseSignIn(token)
+
+    return res;
   }
 
-  @Post('address')
-  async setAddress(@Req() req: AuthRequest, @Body() body: CreateAddressDto) {
-
-    return await this.authService.setAddress(req.user, body)
-  }
 
 
 }

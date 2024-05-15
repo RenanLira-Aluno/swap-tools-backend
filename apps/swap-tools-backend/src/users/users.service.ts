@@ -2,10 +2,10 @@ import { Address, Photo, User } from '@app/database';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/createUser.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 import * as bcrypt from 'bcrypt';
-import { CreateAddressDto } from '../auth/dto/create-address.dto';
+import { CreateAddressDto } from './dto/create-address.dto';
 
 @Injectable()
 export class UsersService {
@@ -64,17 +64,17 @@ export class UsersService {
 
   async setAddress(id: string, address: CreateAddressDto) {
 
-      const user = await this.usersRepository.findOne({ where: { id }, relations: ['address'] });
+    const user = await this.usersRepository.findOne({ where: { id }, relations: ['address'] });
 
-      if (!user.address) {
-        user.address = new Address();
-        user.address.user = user;
-      }
+    if (!user.address) {
+      user.address = new Address();
+      user.address.user = user;
+    }
 
-      user.address = { ...user.address, ...address };
+    user.address = { ...user.address, ...address };
 
 
-      return this.usersRepository.save(user);
+    return this.usersRepository.save(user);
 
   }
 

@@ -12,13 +12,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RefreshToken } from '@app/database/entities';
 import { Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
-import { CreateAddressDto } from './dto/create-address.dto';
+import { CreateAddressDto } from '../users/dto/create-address.dto';
+import { FirebaseService } from '@app/firebase';
 
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private firebaseService: FirebaseService,
     private jwtService: JwtService,
     @InjectRepository(RefreshToken)
     private refreshTokenRepository: Repository<RefreshToken>
@@ -105,15 +107,29 @@ export class AuthService {
 
   }
 
-  async uploadPhoto(user: JwtAuthUser, photo: Express.Multer.File) {
 
-    return await this.usersService.setProfilePhoto(user.id, photo.path)
+  async firebaseSignIn(token: string) {
+    const firebaseUser = await this.firebaseService.verifyIdToken(token)
+
+    let user = await this.usersService.getOneByEmail(firebaseUser.email)
+
+    if (!user) {
+      user = await this.usersService.create({
+        name: firebaseUser.name,
+        email: firebaseUser.email,
+        password: firebaseUser.uid,
+        isAuthProvided: true
+      })
+    }
+
+    const [access_token, refresh_token] = await this.generateToken(user)
+
+    return {
+      access_token,
+      refresh_token
+    }
+
+
   }
-
-  async setAddress(user: JwtAuthUser, body: CreateAddressDto) {
-
-    return await this.usersService.setAddress(user.id, body)
-  }
-
 
 }
