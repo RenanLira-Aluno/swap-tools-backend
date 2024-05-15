@@ -17,9 +17,9 @@
 
 ## Configurações
 
-- ### swap-tools-firebase-admin.json`
+- ### `swap-tools-firebase-admin.json`
 
-	Colar arquivo de configuração enviado no grupo do zap zap.
+	Colar arquivo de configuração enviado no grupo do zap zap em `libs/firebase/src/swap-tools-firebase-admin.json`.
 
 - ### `docker-compose.yml`
 
