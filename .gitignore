@@ -36,3 +36,4 @@ lerna-debug.log*
 .postgresdata
 
 
+swap-tools-firebase-admin.json
