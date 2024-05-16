@@ -8,30 +8,29 @@ import { AuthService } from '../auth.service';
 
 type JwtPayload = {
 
-    sub: string;
-    user: JwtAuthUser
-    token_id: string
+  sub: string;
+  user: JwtAuthUser
+  token_id: string
 }
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
-    Strategy,
-    'jwt-refresh',
+  Strategy,
+  'jwt-refresh',
 ) {
-    constructor(
-        private authService: AuthService
-    ) {
-        super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: jwtConstants.jwt_refresh_secret,
+  constructor(
+    private authService: AuthService
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: jwtConstants.jwt_refresh_secret,
+      ignoreExpiration: false
+    });
+  }
 
-            ignoreExpiration: false
-        });
-    }
+  async validate(payload: JwtPayload) {
+    await this.authService.checkRefreshToken(payload.token_id)
 
-    async validate(payload: JwtPayload) {
-        await this.authService.checkRefreshToken(payload.token_id)
-
-        return payload;
-    }
+    return payload;
+  }
 }

@@ -1,21 +1,14 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { PhotoModel } from "../models";
 import { User } from "./user.entity";
 
 
-@Entity()
+
 export class Photo implements PhotoModel {
 
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-
-  @OneToOne(() => User, user => user.photo)
-  @JoinColumn({ name: "user_id" })
-  user: User;
-
-  @Column()
-  user_id: string;
 
   @Column()
   url: string;

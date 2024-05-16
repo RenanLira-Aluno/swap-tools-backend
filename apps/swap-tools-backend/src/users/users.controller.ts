@@ -1,13 +1,14 @@
-import { Body, Controller, Get, ParseFilePipeBuilder, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { ApiBadRequestResponse, ApiCreatedResponse, ApiHeader, ApiHeaders, ApiOperation, ApiTags } from '@nestjs/swagger';
+
+import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthRequest } from '../auth/interfaces/request.interface';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { PoliciesGuard } from '../authorization-casl/guards/policies.guard';
 import { CheckPolicies } from '../authorization-casl/decorators/check-policy.decorator';
 import { ReadAllUsersPolicyHandler } from '../authorization-casl/handlers/read-all-users-policy.handler';
+import { ImageFilePiperBuilder } from '../pipes/image-file-piper-builder.pipe';
 
 @ApiTags('User')
 
@@ -21,7 +22,7 @@ export class UsersController {
 
   @Get()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies(new ReadAllUsersPolicyHandler())
+
   async getAll() {
     return this.usersService.getAll();
   }
@@ -38,7 +39,7 @@ export class UsersController {
   @Post('profile-photo')
   @ApiOperation({ summary: 'Upload de foto de perfil do usuario' })
   @UseInterceptors(FileInterceptor('photo'))
-  async uploadPhoto(@Req() req: AuthRequest, @UploadedFile(new ParseFilePipeBuilder().addFileTypeValidator({ fileType: 'image/png' }).build()) photo: Express.Multer.File) {
+  async uploadPhoto(@Req() req: AuthRequest, @UploadedFile(ImageFilePiperBuilder) photo: Express.Multer.File) {
 
     const user = await this.usersService.setProfilePhoto(req.user.id, photo.path);
 

@@ -8,12 +8,13 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import { AuthorizationCaslModule } from './authorization-casl/authorization-casl.module';
+import { ToolsModule } from './tools/tools.module';
 
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, AuthorizationCaslModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, AuthorizationCaslModule, ToolsModule],
   controllers: [AppController],
-  providers: [AppService, IsEmailAlreadyInUseContraint, {
+  providers: [AppService,  IsEmailAlreadyInUseContraint, {
     provide: APP_GUARD,
     useClass: AccessTokenGuard
   }],

@@ -4,6 +4,7 @@ import { AppAbility, CaslAbilityFactory } from "../casl-ability/casl-ability.fac
 import { PolicyHandler } from "../handlers/interface/policy-handler.handler";
 import { CHECK_POLICIES_KEY } from "../decorators/check-policy.decorator";
 
+
 @Injectable()
 export class PoliciesGuard implements CanActivate {
   constructor(

@@ -1,24 +1,27 @@
-import { User } from "@app/database";
-import { AbilityBuilder, ExtractSubjectType, InferSubjects, PureAbility } from "@casl/ability";
+import { Tool, User } from "@app/database";
+import { AbilityBuilder, createMongoAbility, ExtractSubjectType, InferSubjects, MongoAbility, MongoQuery, PureAbility } from "@casl/ability";
 import { Injectable } from "@nestjs/common";
 import { Action } from "../enums/action.enum";
+import { ToolStatus } from "@app/database/models/enum/tool-status.enum";
 
-type Subjects = InferSubjects<typeof User | 'all'>;
-export type AppAbility = PureAbility<[Action, Subjects]>
+export type Subjects = InferSubjects<typeof User | typeof Tool | 'all'>;
 
+export type AppAbility = MongoAbility<[Action, Subjects], MongoQuery>
 
 @Injectable()
 export class CaslAbilityFactory {
 
   createForUser(user: User) {
-    const { can, cannot, build } = new AbilityBuilder<AppAbility>(PureAbility)
+    const { can, cannot, build } = new AbilityBuilder<AppAbility>(createMongoAbility<[Action, Subjects], MongoQuery>)
 
 
     if (user.isAdmin) {
       can(Action.Manage, 'all')
     }
 
-    // cannot(Action.Read, User, 'all')
+    can(Action.Read, Tool, { status: ToolStatus.AVAILABLE })
+
+    cannot(Action.Read, Tool, { status: ToolStatus.UNAVAILABLE })
 
     return build({
       detectSubjectType: item => item.constructor as ExtractSubjectType<Subjects>

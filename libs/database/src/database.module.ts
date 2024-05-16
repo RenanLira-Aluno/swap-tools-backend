@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DatabaseService } from './database.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { User, Photo, RefreshToken,Address } from './entities';
+import { User, Photo, RefreshToken, Address, Tool, PhotoTool, PhotoUser } from './entities';
 
 
 @Module({
@@ -14,7 +14,7 @@ import { User, Photo, RefreshToken,Address } from './entities';
       username: 'postgres',
       password: 'postgres',
       database: 'test',
-      entities: [RefreshToken, User, Photo, Address],
+      entities: [RefreshToken, User, Address, Tool, PhotoTool, PhotoUser],
       synchronize: true,
     })
   ],

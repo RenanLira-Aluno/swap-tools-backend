@@ -1,4 +1,4 @@
-import { Address, Photo, User } from '@app/database';
+import { Address, PhotoUser, User } from '@app/database';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -51,7 +51,7 @@ export class UsersService {
     const user = await this.usersRepository.findOne({ where: { id }, relations: ['photo'] });
 
     if (!user.photo) {
-      user.photo = new Photo();
+      user.photo = new PhotoUser();
       user.photo.user = user;
     }
 

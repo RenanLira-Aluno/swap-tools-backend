@@ -1,4 +1,4 @@
-import { AppAbility } from "../../casl-ability/casl-ability.factory";
+import { AppAbility, Subjects } from "../../casl-ability/casl-ability.factory";
 
 export interface IPolicyHandler {
   handle(ability: AppAbility): boolean
