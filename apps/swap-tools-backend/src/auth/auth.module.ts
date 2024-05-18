@@ -11,11 +11,28 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshToken } from '@app/database/entities';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FirebaseModule } from '@app/firebase';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [UsersModule, FirebaseModule, PassportModule, JwtModule.register({
-    verifyOptions: { ignoreExpiration: false,  },
-  }), TypeOrmModule.forFeature([RefreshToken])],
+    verifyOptions: { ignoreExpiration: false, },
+  }), TypeOrmModule.forFeature([RefreshToken]),
+    ClientsModule.register([
+      {
+        name: 'NOTIFICATIONS_SERVICE',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            brokers: ['localhost:9092'],
+          },
+          producerOnlyMode: true,
+          consumer: {
+            groupId: 'notifications-consumer',
+          },
+        },
+      }
+    ])
+  ],
   controllers: [AuthController],
   providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy, LocalStrategy]
 })

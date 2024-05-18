@@ -7,6 +7,8 @@ import { AuthRequest } from '../auth/interfaces/request.interface';
 import { PoliciesGuard } from '../authorization-casl/guards/policies.guard';
 import { CheckPolicies } from '../authorization-casl/decorators/check-policy.decorator';
 import { ReadToolUnavailableHandle } from '../authorization-casl/handlers/read-tool-unavailable.handler';
+import { GetInstance } from '../authorization-casl/decorators/get-instance.decorator';
+import { Tool } from '@app/database';
 
 @Controller('tools')
 export class ToolsController {
@@ -27,9 +29,11 @@ export class ToolsController {
 
   @Get(':id')
   @UseGuards(PoliciesGuard)
-  async getOne(@Param('id') id: string) {
+  @GetInstance<Tool>(Tool, 'id')
+  @CheckPolicies(new ReadToolUnavailableHandle())
+  async getOne(@Req() request: Request, @Param('id') id: string) {
 
-    return await this.toolsService.getOne(id);
+    return request['Tool'];
 
   }
 

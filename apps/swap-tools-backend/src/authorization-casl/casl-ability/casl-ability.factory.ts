@@ -21,7 +21,7 @@ export class CaslAbilityFactory {
 
     can(Action.Read, Tool, { status: ToolStatus.AVAILABLE })
 
-    cannot(Action.Read, Tool, { status: ToolStatus.UNAVAILABLE })
+    can(Action.Manage, Tool, { status: ToolStatus.UNAVAILABLE, user_id: user.id })
 
     return build({
       detectSubjectType: item => item.constructor as ExtractSubjectType<Subjects>

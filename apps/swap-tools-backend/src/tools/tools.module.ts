@@ -6,10 +6,9 @@ import { Tool } from '@app/database';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { AuthRequest } from '../auth/interfaces/request.interface';
-import { AuthorizationCaslModule } from '../authorization-casl/authorization-casl.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Tool]), AuthorizationCaslModule, MulterModule.register({
+  imports: [TypeOrmModule.forFeature([Tool]), MulterModule.register({
     dest: './upload',
     storage: diskStorage({
       destination: './upload',

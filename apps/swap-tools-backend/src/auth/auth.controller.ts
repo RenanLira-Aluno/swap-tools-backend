@@ -1,4 +1,4 @@
-import { Body, Controller, FileTypeValidator, Get, HttpCode, Param, ParseFilePipe, ParseFilePipeBuilder, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, FileTypeValidator, Get, HttpCode, Inject, OnModuleInit, Param, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { SignUpDto } from './dto/signUp.dto';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signIn.dto';
@@ -8,17 +8,24 @@ import { AuthRequest, RefreshRequest } from './interfaces/request.interface';
 import { SignInResponse } from './interfaces/responses/signIn.response';
 
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateAddressDto } from '../users/dto/create-address.dto';
+import { Client, ClientKafka, ClientsModule } from '@nestjs/microservices';
 
 
 @ApiTags('auth')
 @Controller('auth')
-export class AuthController {
+export class AuthController implements OnModuleInit {
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    @Inject('NOTIFICATIONS_SERVICE')
+    private clientKafka: ClientKafka
   ) { }
+
+
+  async onModuleInit() {
+    this.clientKafka.subscribeToResponseOf('notifications.signup');
+    await this.clientKafka.connect();
+  }
 
 
   @ApiOkResponse({ description: 'User data' })
@@ -40,6 +47,7 @@ export class AuthController {
   @HttpCode(200)
   @Post('signin')
   async signIn(@Body() signInDto: SignInDto) {
+
     return this.authService.signIn(signInDto);
   }
 
@@ -47,8 +55,6 @@ export class AuthController {
   @UseGuards(RefreshTokenGuard)
   @Post('refresh-token')
   async refreshToken(@Req() req: RefreshRequest) {
-
-
     return await this.authService.refreshToken(req.user.token_id, req.user.user)
   }
 

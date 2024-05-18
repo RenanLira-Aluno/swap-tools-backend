@@ -3,13 +3,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { AuthorizationCaslModule } from '../authorization-casl/authorization-casl.module';
+
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { AuthRequest } from '../auth/interfaces/request.interface';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, RefreshToken]), AuthorizationCaslModule, MulterModule.register({
+  imports: [TypeOrmModule.forFeature([User, RefreshToken]), MulterModule.register({
     dest: './upload',
     storage: diskStorage({
       destination: './upload',

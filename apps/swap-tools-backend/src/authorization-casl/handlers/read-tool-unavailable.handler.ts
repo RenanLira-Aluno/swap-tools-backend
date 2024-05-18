@@ -6,8 +6,10 @@ import { IPolicyHandler } from "./interface/policy-handler.handler";
 
 
 export class ReadToolUnavailableHandle implements IPolicyHandler {
-  handle(ability: AppAbility): boolean {
-    throw new Error("Method not implemented.");
+  handle(ability: AppAbility, entity?: any): boolean {
+
+    return ability.can(Action.Read, entity, 'status')
   }
+
 
 }
